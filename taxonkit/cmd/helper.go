@@ -1,4 +1,4 @@
-// Copyright © 2016-2019 Wei Shen <shenwei356@gmail.com>
+// Copyright © 2016-2020 Wei Shen <shenwei356@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,8 +33,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// VERSION of csvtk
-const VERSION = "0.5.1"
+// VERSION of taxonkit
+const VERSION = "0.6.0"
 
 // Config is the struct containing all global flags
 type Config struct {
@@ -151,8 +151,14 @@ func getTaxonNames(file string, bufferSize int, chunkSize int) map[int32]string 
 	return taxid2name
 }
 
-func getTaxonName2Taxids(file string, bufferSize int, chunkSize int) map[string][]int32 {
-	reader, err := breader.NewBufferedReader(file, bufferSize, chunkSize, nameParseFunc2)
+func getTaxonName2Taxids(file string, limit2SciName bool, bufferSize int, chunkSize int) map[string][]int32 {
+	var reader *breader.BufferedReader
+	var err error
+	if limit2SciName {
+		reader, err = breader.NewBufferedReader(file, bufferSize, chunkSize, nameParseFunc)
+	} else {
+		reader, err = breader.NewBufferedReader(file, bufferSize, chunkSize, nameParseFunc2)
+	}
 	checkError(err)
 
 	var taxon Taxon
